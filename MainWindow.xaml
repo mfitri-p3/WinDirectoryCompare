@@ -1,0 +1,80 @@
+﻿<Window x:Class="WinDirectoryCompare.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WinDirectoryCompare"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style x:Key="HeaderLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+        <Style x:Key="PathInputTextBox" TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Margin" Value="6"/>
+        </Style>
+        <Style x:Key="GetPathButton" TargetType="Button">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style x:Key="ListViewDefault" TargetType="ListView">
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style x:Key="FunctionButton" TargetType="Button">
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="MinWidth" Value="50"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40*"/>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="40*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="70*"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+            <Label Style="{StaticResource HeaderLabel}">Source:</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80*"/>
+                    <ColumnDefinition Width="20*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Style="{StaticResource PathInputTextBox}" x:Name="PathInputSource" Grid.Column="0"/>
+                <Button Style="{StaticResource GetPathButton}" x:Name="OpenDialogSourceButton" Grid.Column="1">Find</Button>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Vertical">
+            <Label Style="{StaticResource HeaderLabel}">Destination:</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80*"/>
+                    <ColumnDefinition Width="20*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Style="{StaticResource PathInputTextBox}" x:Name="PathInputDestination"/>
+                <Button Style="{StaticResource GetPathButton}" x:Name="OpenDialogDestinationButton" Grid.Column="1">Find</Button>
+            </Grid>
+        </StackPanel>
+        <ListView Style="{StaticResource ListViewDefault}" x:Name="SourceListView" Grid.Row="1" Grid.Column="0">
+
+        </ListView>
+        <ListView Style="{StaticResource ListViewDefault}" x:Name="DestinationListView" Grid.Row="1" Grid.Column="2">
+
+        </ListView>
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Style="{StaticResource FunctionButton}">Copy to Destination</Button>
+        </StackPanel>
+        <Button Style="{StaticResource FunctionButton}" Grid.Row="2" Grid.Column="1">Show Difference</Button>
+        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" FlowDirection="LeftToRight">
+            <Button Style="{StaticResource FunctionButton}">Clear All Files</Button>
+        </StackPanel>
+    </Grid>
+</Window>
