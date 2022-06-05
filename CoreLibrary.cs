@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.ComponentModel;
 
 namespace WinDirectoryCompare
 {
@@ -46,33 +47,132 @@ namespace WinDirectoryCompare
 
         public void FindDifference()
         {
+            //Highlight files that are missing in the destination in comparison from the source.
+            foreach (var file in SourceFiles)
+            {
+                bool isFileExists = DestinationFiles.Any(x => x.FileName.Equals(file.FileName));
+                if (!isFileExists)
+                {
+                    file.IsMissing = true;
+                }
+            }
 
+            //Highlight files that are new from the source in the destination.
+            foreach (var file in DestinationFiles)
+            {
+                bool isFileExists = SourceFiles.Any(x => x.FileName.Equals(file.FileName));
+                if (!isFileExists)
+                {
+                    file.IsNew = true;
+                }
+            }
         }
 
-        public void TransferAllToDestination(bool enableOverwrite = false)
+        public void TransferMissingToDestination(out StringBuilder errMsg)
         {
-
-        }
-
-        public void TransferMissingToDestination()
-        {
-
+            errMsg = new StringBuilder();
+            List<FileItem> thoseMissingFiles = SourceFiles.FindAll(x => x.IsMissing == true);
+            if (thoseMissingFiles != null)
+            {
+                foreach (FileItem fileItem in thoseMissingFiles)
+                {
+                    try
+                    {
+                        string newDestinationFile = Path.Combine(DestinationPath, fileItem.FileNameWithExtension);
+                        File.Move(fileItem.FullPath, newDestinationFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        errMsg.AppendLine(ex.Message);
+                    }
+                }
+            }
         }
 
         #endregion
     }
 
-    public class FileItem
+    public class FileItem : INotifyPropertyChanged
     {
-        public string FileName { get; set; }
-        public string Extension { get; set; }
-        public string DirectoryPath { get; set; }
-        public bool IsHighlighted { get; set; }
+        #region Properties
+
+        private string _fileName;
+        public string FileName 
+        { 
+            get
+            {
+                return _fileName;
+            }
+            set
+            {
+                _fileName = value;
+                OnPropertyChanged("FileName");
+            }
+        }
+        private string _extension;
+        public string Extension 
+        { 
+            get
+            {
+                return _extension;
+            }
+            set
+            {
+                _extension = value;
+                OnPropertyChanged("Extension");
+            }
+        }
+        private string _directoryPath;
+        public string DirectoryPath 
+        { 
+            get
+            {
+                return _directoryPath;
+            }
+            set
+            {
+                _directoryPath = value;
+                OnPropertyChanged("DirectoryPath");
+            }
+        }
+        private bool _isMissing;
+        public bool IsMissing
+        {
+            get
+            {
+                return _isMissing;
+            }
+            set
+            {
+                _isMissing = value;
+                OnPropertyChanged("IsMissing");
+            }
+        }
+        private bool _isNew;
+        public bool IsNew
+        {
+            get
+            {
+                return _isNew;
+            }
+            set
+            {
+                _isNew = value;
+                OnPropertyChanged("IsNew");
+            }
+        }
         public string FullPath 
         {
             get
             {
-                return Path.Combine(DirectoryPath, string.Format("{0}.{1}", FileName, Extension));
+                if (_extension.Contains('.'))
+                {
+                    return Path.Combine(DirectoryPath, string.Format("{0}{1}", FileName, Extension));
+                }
+                else
+                {
+                    return Path.Combine(DirectoryPath, string.Format("{0}.{1}", FileName, Extension));
+                }
             }
         }
         public string FullPathWithoutExtension
@@ -82,19 +182,44 @@ namespace WinDirectoryCompare
                 return Path.Combine(DirectoryPath, FileName);
             }
         }
-        public FileItem()
+        public string FileNameWithExtension
         {
-            FileName = "";
-            Extension = "";
-            DirectoryPath = "";
-            IsHighlighted = false;
+            get
+            {
+                return FileName + "." + Extension;
+            }
         }
-        public FileItem(string fileName, string extension, string directoryPath, bool isHighlighted)
+
+        #endregion
+
+        #region Constructor
+
+        public FileItem() { }
+        public FileItem(string fileName, string extension, string directoryPath)
         {
             FileName = fileName;
             Extension = extension;
             DirectoryPath = directoryPath;
-            IsHighlighted = isHighlighted;
         }
+
+        #endregion
+
+        #region PropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+        protected void OnPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));  
+        }
+
+        #endregion
     }
 }
