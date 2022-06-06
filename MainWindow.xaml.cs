@@ -20,9 +20,75 @@ namespace WinDirectoryCompare
     /// </summary>
     public partial class MainWindow : Window
     {
+        public CoreLibrary CoreLib { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
+            SetupBinding();
+        }
+
+        #region Setup
+
+        public void SetupBinding()
+        {
+            CoreLib = new CoreLibrary();
+            //Binding sourcePathBinding = new Binding("SourcePath");
+            //PathInputSource.SetBinding(TextBox.TextProperty, sourcePathBinding);
+            //Binding destinationPathBinding = new Binding("DestinationPath");
+            //PathInputDestination.SetBinding(TextBox.TextProperty, destinationPathBinding);
+            //Binding sourceFileList = new Binding("SourceFiles");
+            //Binding destinationFileList = new Binding("DestinationFiles");
+            //SourceListView.SetBinding(ItemsControl.ItemsSourceProperty, sourceFileList);
+            //DestinationListView.SetBinding(ItemsControl.ItemsSourceProperty, destinationFileList);
+            SourceListView.ItemsSource = CoreLib.SourceFiles;
+            DestinationListView.ItemsSource = CoreLib.DestinationFiles;
+        }
+
+        #endregion
+
+        private void ConfirmSourceButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(PathInputSource.Text))
+            {
+                CoreLib.SourcePath = PathInputSource.Text;
+            }
+            else
+            {
+                MessageBox.Show("Provided Source Path is empty!", "Source Path", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void ConfirmDestinationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(PathInputDestination.Text))
+            {
+                CoreLib.DestinationPath = PathInputDestination.Text;
+            }
+            else
+            {
+                MessageBox.Show("Provided Destination Path is empty!", "Destination Path", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void CopyFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            StringBuilder errMsgFromCore = new StringBuilder();
+            CoreLib.TransferMissingToDestination(out errMsgFromCore);
+            if (errMsgFromCore.Length > 0)
+            {
+                MessageBox.Show(errMsgFromCore.ToString(), "Error Message when Copying Files", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void ShowDifferenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            CoreLib.FindDifference();
+        }
+
+        private void ClearFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

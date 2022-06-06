@@ -2,32 +2,82 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace WinDirectoryCompare
 {
-    internal class CoreLibrary
+    public class CoreLibrary : INotifyPropertyChanged
     {
         #region Properties
 
+        private string _sourcePath;
         /// <summary>
         /// Directory path of source.
         /// </summary>
-        public string SourcePath { get; set; }
+        public string SourcePath 
+        { 
+            get
+            {
+                return _sourcePath;
+            }
+            set
+            {
+                _sourcePath = value;
+                if (Directory.Exists(_sourcePath) && !string.IsNullOrEmpty(_sourcePath))
+                {
+                    SourceFiles.Clear();
+                    List<string> currentFiles = Directory.GetFiles(_sourcePath).ToList();
+                    if (currentFiles != null)
+                    {
+                        foreach (var file in currentFiles)
+                        {
+                            FileItem freshItem = new FileItem(Path.GetFileNameWithoutExtension(file), Path.GetExtension(file), _sourcePath);
+                            SourceFiles.Add(freshItem);
+                        }
+                    }
+                }
+                OnPropertyChanged("SourcePath");
+            }
+        }
         /// <summary>
         /// File items from source directory.
         /// </summary>
-        public List<FileItem> SourceFiles { get; set; }
+        public ObservableCollection<FileItem> SourceFiles { get; set; }
+        private string _destinationPath;
         /// <summary>
         /// Directory path of destination.
         /// </summary>
-        public string DestinationPath { get; set; }
+        public string DestinationPath 
+        { 
+            get
+            {
+                return _destinationPath;
+            }
+            set
+            {
+                _destinationPath = value;
+                if (Directory.Exists(_destinationPath) && !string.IsNullOrEmpty(_destinationPath))
+                {
+                    DestinationFiles.Clear();
+                    List<string> currentFiles = Directory.GetFiles(_destinationPath).ToList();
+                    if (currentFiles != null)
+                    {
+                        foreach (var file in currentFiles)
+                        {
+                            FileItem freshItem = new FileItem(Path.GetFileNameWithoutExtension(file), Path.GetExtension(file), _destinationPath);
+                            DestinationFiles.Add(freshItem);
+                        }
+                    }
+                }
+                OnPropertyChanged("DestinationPath");
+            }
+        }
         /// <summary>
         /// File items from destination directory.
         /// </summary>
-        public List<FileItem> DestinationFiles { get; set; }
+        public ObservableCollection<FileItem> DestinationFiles { get; set; }
 
         #endregion
 
@@ -37,8 +87,8 @@ namespace WinDirectoryCompare
         {
             SourcePath = "";
             DestinationPath = "";
-            SourceFiles = new List<FileItem>();
-            DestinationFiles = new List<FileItem>();
+            SourceFiles = new ObservableCollection<FileItem>();
+            DestinationFiles = new ObservableCollection<FileItem>();
         }
 
         #endregion
@@ -71,7 +121,7 @@ namespace WinDirectoryCompare
         public void TransferMissingToDestination(out StringBuilder errMsg)
         {
             errMsg = new StringBuilder();
-            List<FileItem> thoseMissingFiles = SourceFiles.FindAll(x => x.IsMissing == true);
+            List<FileItem> thoseMissingFiles = SourceFiles.Where(x => x.IsMissing == true).ToList();
             if (thoseMissingFiles != null)
             {
                 foreach (FileItem fileItem in thoseMissingFiles)
@@ -87,6 +137,20 @@ namespace WinDirectoryCompare
                     }
                 }
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+        protected void OnPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
