@@ -79,7 +79,7 @@ namespace WinDirectoryCompare
                     try
                     {
                         string newDestinationFile = Path.Combine(DestinationPath, fileItem.FileNameWithExtension);
-                        File.Move(fileItem.FullPath, newDestinationFile);
+                        File.Copy(fileItem.FullPath, newDestinationFile);
                     }
                     catch (Exception ex)
                     {
