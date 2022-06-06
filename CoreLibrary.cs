@@ -130,6 +130,8 @@ namespace WinDirectoryCompare
                     {
                         string newDestinationFile = Path.Combine(DestinationPath, fileItem.FileNameWithExtension);
                         File.Copy(fileItem.FullPath, newDestinationFile);
+                        fileItem.DirectoryPath = DestinationPath;
+                        DestinationFiles.Add(fileItem);
                     }
                     catch (Exception ex)
                     {
