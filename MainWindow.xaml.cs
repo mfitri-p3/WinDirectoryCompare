@@ -25,27 +25,10 @@ namespace WinDirectoryCompare
         public MainWindow()
         {
             InitializeComponent();
-            SetupBinding();
-        }
-
-        #region Setup
-
-        public void SetupBinding()
-        {
             CoreLib = new CoreLibrary();
-            //Binding sourcePathBinding = new Binding("SourcePath");
-            //PathInputSource.SetBinding(TextBox.TextProperty, sourcePathBinding);
-            //Binding destinationPathBinding = new Binding("DestinationPath");
-            //PathInputDestination.SetBinding(TextBox.TextProperty, destinationPathBinding);
-            //Binding sourceFileList = new Binding("SourceFiles");
-            //Binding destinationFileList = new Binding("DestinationFiles");
-            //SourceListView.SetBinding(ItemsControl.ItemsSourceProperty, sourceFileList);
-            //DestinationListView.SetBinding(ItemsControl.ItemsSourceProperty, destinationFileList);
             SourceListView.ItemsSource = CoreLib.SourceFiles;
             DestinationListView.ItemsSource = CoreLib.DestinationFiles;
         }
-
-        #endregion
 
         private void ConfirmSourceButton_Click(object sender, RoutedEventArgs e)
         {
