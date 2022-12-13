@@ -8,6 +8,9 @@ using System.Collections.ObjectModel;
 
 namespace WinDirectoryCompare
 {
+    /// <summary>
+    /// Core library for all core functionalities.
+    /// </summary>
     public class CoreLibrary : INotifyPropertyChanged
     {
         #region Properties
@@ -95,6 +98,9 @@ namespace WinDirectoryCompare
 
         #region Methods
 
+        /// <summary>
+        /// Check for difference(s) for files between two folders.
+        /// </summary>
         public void FindDifference()
         {
             //Highlight files that are missing in the destination in comparison from the source.
@@ -117,7 +123,10 @@ namespace WinDirectoryCompare
                 }
             }
         }
-
+        /// <summary>
+        /// Do the file transfer for missing files on destination folder.
+        /// </summary>
+        /// <param name="errMsg">Error message.</param>
         public void TransferMissingToDestination(out StringBuilder errMsg)
         {
             errMsg = new StringBuilder();
@@ -157,7 +166,9 @@ namespace WinDirectoryCompare
 
         #endregion
     }
-
+    /// <summary>
+    /// File item class.
+    /// </summary>
     public class FileItem : INotifyPropertyChanged
     {
         #region Properties

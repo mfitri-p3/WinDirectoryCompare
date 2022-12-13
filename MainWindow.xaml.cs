@@ -49,9 +49,9 @@ namespace WinDirectoryCompare
 
         private void ConfirmSourceButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(PathInputSource.Text))
+            if (!string.IsNullOrWhiteSpace(PathInputSource.Text))
             {
-                CoreLib.SourcePath = PathInputSource.Text;
+                CoreLib.SourcePath = PathInputSource.Text.Trim();
             }
             else
             {
@@ -61,9 +61,9 @@ namespace WinDirectoryCompare
 
         private void ConfirmDestinationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(PathInputDestination.Text))
+            if (!string.IsNullOrWhiteSpace(PathInputDestination.Text))
             {
-                CoreLib.DestinationPath = PathInputDestination.Text;
+                CoreLib.DestinationPath = PathInputDestination.Text.Trim();
             }
             else
             {
